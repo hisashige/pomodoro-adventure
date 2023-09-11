@@ -102,29 +102,28 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
   }
 
   const ButtonArea = () => {
-    if (!isRunning) {
-      if (isEdit) {
-        return (
-          <Group position="center">
-            <Button radius="lg" onClick={handleSaveAll}>
-              <IconDeviceFloppy />
-              保存
-            </Button>
-            <Button radius="lg" variant="outline" onClick={cancelEdit}>
-              キャンセル
-            </Button>
-          </Group>
-        )
-      } else {
-        return (
-          <Group position="right">
-            <Button radius="lg" variant="outline" onClick={onEditable}>
-              <IconEdit />
-              編集
-            </Button>
-          </Group>
-        )
-      }
+    if (isRunning) return
+    if (isEdit) {
+      return (
+        <Group position="center">
+          <Button radius="lg" onClick={handleSaveAll}>
+            <IconDeviceFloppy />
+            保存
+          </Button>
+          <Button radius="lg" variant="outline" onClick={cancelEdit}>
+            キャンセル
+          </Button>
+        </Group>
+      )
+    } else {
+      return (
+        <Group position="right">
+          <Button radius="lg" variant="outline" onClick={onEditable}>
+            <IconEdit />
+            編集
+          </Button>
+        </Group>
+      )
     }
   }
 
