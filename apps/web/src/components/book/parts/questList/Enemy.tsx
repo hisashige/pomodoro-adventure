@@ -8,10 +8,12 @@ import {
   Tooltip,
   ActionIcon,
   Group,
+  Image,
 } from '@mantine/core'
 import { useLogContext } from '../../../../contexts/LogContext'
 import { useMemo } from 'react'
 import { IconInfoCircle } from '@tabler/icons-react'
+import pomonyan3 from '../../../../assets/images/character/pomonyan3.png'
 
 interface Props {
   isRunning: boolean
@@ -30,7 +32,14 @@ export default function Enemy({ isRunning }: Props) {
   }, [logs])
 
   return (
-    <Paper className="enemy-area" withBorder radius="md" p="md" m="xs">
+    <Paper
+      className="enemy-area"
+      withBorder
+      radius="md"
+      p="md"
+      m="xs"
+      style={{ position: 'relative' }}
+    >
       <Text color="red" ta="center" fz="xl" fw={700}>
         ENEMY
       </Text>
@@ -68,6 +77,11 @@ export default function Enemy({ isRunning }: Props) {
           </List>
         </Box>
       </Box>
+      <Image
+        src={pomonyan3}
+        width={100}
+        style={{ position: 'absolute', right: 10, bottom: 10 }}
+      ></Image>
     </Paper>
   )
 }

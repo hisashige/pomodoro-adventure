@@ -118,7 +118,7 @@ export default function HeaderMiddle() {
           }}
         >
           <Group spacing={5}>
-            <Image maw={50} mx="auto" radius="md" src="images/logo.jpg" alt="ポモにゃん" />
+            <Image maw={50} mx="auto" radius="md" src="images/logo.png" alt="ポモにゃん" />
             <Text size="xl" weight={500}>
               Pomodoro Adventure
             </Text>

@@ -34,7 +34,7 @@ export const steps = [
   {
     selector: '.dummy',
     content: () => (
-      <StepContent title="ツアーの開始" img="/images/logo.jpg">
+      <StepContent title="ツアーの開始" img="/images/logo.png">
         <p>ポモドーロアドベンチャーへようこそ！</p>
         <br />
         <p>
