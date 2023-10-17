@@ -4,6 +4,7 @@ import Page from '../layouts/Page'
 import Timer from '../parts/pomodoro/Timer'
 import { TimerStatus, usePomodoroContext } from '../../../contexts/PomodoroContext'
 import { FINISHED_IMGS, PAUSED_IMGS, PLAYING_IMGS, WAITING_IMGS } from '../../../consts/images'
+import { useViewportSize } from '@mantine/hooks'
 
 interface ImageUrls {
   [TimerStatus.Playing]: string
@@ -44,10 +45,12 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
     }
   }, [status])
 
+  const { height } = useViewportSize()
+
   return (
     <div className="page" ref={ref}>
       <Page number={number} header="Pomodoro   Field">
-        <Image className="image-area" radius={5} height={400} src={imageUrl}></Image>
+        <Image className="image-area" radius={5} height={height * 0.8 - 350} src={imageUrl}></Image>
         <div className="page-text timer-area">
           <Timer></Timer>
         </div>
