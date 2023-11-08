@@ -1,74 +1,64 @@
-import { ActionIcon, Tooltip } from '@mantine/core'
-import {
-  getAuth,
-  signInWithRedirect,
-  getRedirectResult,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-} from 'firebase/auth'
-import { useEffect } from 'react'
-import { IconLogout } from '@tabler/icons-react'
+import { ActionIcon, Button, Tooltip, Text } from '@mantine/core'
+import { linkWithRedirect, signInWithRedirect } from 'firebase/auth'
 import { useUserContext } from '../../contexts/UserContext'
+import { notifications } from '@mantine/notifications'
+import { IconX } from '@tabler/icons-react'
 
-export default function SignInWithGoogleButton() {
-  const provider = new GoogleAuthProvider()
-  const auth = getAuth()
-  const { user, setUser, token } = useUserContext()
+interface Props {
+  minimal?: boolean
+}
+
+export default function SignInWithGoogleButton({ minimal }: Props) {
+  const { user, auth, provider } = useUserContext()
 
   const handleSignIn = () => {
-    signInWithRedirect(auth, provider)
-  }
-  const handleSignOut = () => {
-    auth.signOut()
-  }
-
-  useEffect(() => {
-    // Googleログインからリダイレクトされたときのユーザー取得処理
-    getRedirectResult(auth)
-      .then((result) => {
-        const resultUser = result?.user
-        if (resultUser) {
-          setUser(resultUser)
-
-          const isOnceLoggedIn = localStorage.getItem('isOnceLoggedIn')
-          if (!isOnceLoggedIn) {
-            // TODO:初めてログインしたら、データのマイグレーションを行う。
-            localStorage.setItem('isOnceLoggedIn', JSON.stringify(true))
-          }
-        }
+    if (auth === null || provider === null) return
+    if (minimal) {
+      if (user === null) return
+      linkWithRedirect(user, provider).catch((error) => {
+        notifications.show({
+          title: <Text weight="bold">Googleアカウントとの連携に失敗しました。</Text>,
+          message: error.message,
+          color: 'red',
+          icon: <IconX size="1.2rem" />,
+        })
       })
-      .catch((error) => {
-        console.error('Googleログインエラー:', error)
+    } else {
+      signInWithRedirect(auth, provider).catch((error) => {
+        console.error(error)
+        notifications.show({
+          title: <Text weight="bold">Googleアカウントでのサインインに失敗しました。</Text>,
+          message: error.message,
+          color: 'red',
+          icon: <IconX size="1.2rem" />,
+        })
       })
+    }
+  }
 
-    // ユーザーはfirebaseが永続化してくれており、以下で取得できる。
-    // ユーザー情報が欲しい場合は、ここでsetUserしているので、Contextから取得する。
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user)
-      } else {
-        // ログアウトされたらnullにする
-        setUser(null)
-      }
-    })
-  }, [])
-
-  useEffect(() => {
-    console.log('Google IDトークン:', token)
-    console.log('Googleユーザー2:', user)
-  }, [token])
-
-  return user ? (
-    <Tooltip label="Sign out">
-      <ActionIcon size="lg" color="dark" onClick={handleSignOut}>
-        <IconLogout size="1.1rem" stroke={1.5} />
-      </ActionIcon>
-    </Tooltip>
-  ) : (
-    <Tooltip label="Sign in with Google">
-      <ActionIcon size="lg" color="dark" onClick={handleSignIn}>
-        <img style={{ height: '1.5rem' }} src="/images/google.svg" alt="Google SignIn" />
-      </ActionIcon>
+  return (
+    <Tooltip
+      w={300}
+      multiline
+      label="Googleアカウントでログインすることで、他のデバイスでもデータを共有できます。"
+    >
+      {minimal ? (
+        <ActionIcon size="lg" color="dark" onClick={handleSignIn}>
+          <img style={{ height: '1.5rem' }} src="/images/google.svg" alt="Google SignIn" />
+        </ActionIcon>
+      ) : (
+        <Button
+          style={{
+            padding: 0,
+            border: 'none',
+            background: 'none',
+            height: 'auto',
+          }}
+          onClick={handleSignIn}
+        >
+          <img style={{ width: '200px' }} src="/images/google-signin.svg" alt="Google SignIn" />
+        </Button>
+      )}
     </Tooltip>
   )
 }
