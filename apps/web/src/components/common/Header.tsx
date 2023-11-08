@@ -10,11 +10,12 @@ import {
   Button,
   Tooltip,
 } from '@mantine/core'
-import { IconBrandX, IconHelp } from '@tabler/icons-react'
+import { IconHelp } from '@tabler/icons-react'
 import useFlipPage from '../../hooks/useFlipPage'
-import { TWITTER_ACCOUNT } from '../../consts/common'
+import { CREATOR_SITE } from '../../consts/common'
 import { useTour } from '@reactour/tour'
 import { useOs } from '@mantine/hooks'
+import SignInWithGoogleButton from './SignInWithGoogleButton'
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -135,13 +136,19 @@ export default function HeaderMiddle() {
             </Tooltip>
           )}
 
-          <Tooltip label="ご要望などはこちら">
-            <a href={TWITTER_ACCOUNT} target="_blank" rel="noopener noreferrer">
+          <Tooltip label="制作者のサイト">
+            <a href={CREATOR_SITE} target="_blank" rel="noopener noreferrer">
               <ActionIcon size="lg" color="dark">
-                <IconBrandX size="1.1rem" stroke={1.5} />
+                <img
+                  style={{ height: '1.5rem', border: 'solid 0.5px #777777', borderRadius: '16px' }}
+                  src="/images/hisachii.png"
+                  alt="制作者のサイト"
+                />
               </ActionIcon>
             </a>
           </Tooltip>
+
+          <SignInWithGoogleButton />
         </Group>
       </Container>
     </Header>

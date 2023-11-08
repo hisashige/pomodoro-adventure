@@ -5,6 +5,7 @@ import { TourProvider } from '@reactour/tour'
 import './App.scss'
 import Book from './components/book'
 import Header from './components/common/Header'
+import { UserProvider } from './contexts/UserContext'
 import { BookProvider } from './contexts/BookContext'
 import { QuestProvider } from './contexts/QuestContext'
 import { Notifications } from '@mantine/notifications'
@@ -40,26 +41,28 @@ function App() {
     >
       <Notifications />
       <ModalsProvider>
-        <BookProvider>
-          <QuestProvider>
-            <LogProvider>
-              <PomodoroProvider>
-                <TourProvider
-                  steps={steps}
-                  styles={{
-                    popover: (base) => ({
-                      ...base,
-                      borderRadius: '20px',
-                    }),
-                  }}
-                >
-                  <Header></Header>
-                  {isSupportedOS ? <Book></Book> : 'サポート外のOSです。PCで開いてね。'}
-                </TourProvider>
-              </PomodoroProvider>
-            </LogProvider>
-          </QuestProvider>
-        </BookProvider>
+        <UserProvider>
+          <BookProvider>
+            <QuestProvider>
+              <LogProvider>
+                <PomodoroProvider>
+                  <TourProvider
+                    steps={steps}
+                    styles={{
+                      popover: (base) => ({
+                        ...base,
+                        borderRadius: '20px',
+                      }),
+                    }}
+                  >
+                    <Header></Header>
+                    {isSupportedOS ? <Book></Book> : 'サポート外のOSです。PCで開いてね。'}
+                  </TourProvider>
+                </PomodoroProvider>
+              </LogProvider>
+            </QuestProvider>
+          </BookProvider>
+        </UserProvider>
       </ModalsProvider>
     </MantineProvider>
   )

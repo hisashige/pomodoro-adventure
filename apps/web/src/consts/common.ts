@@ -1,4 +1,4 @@
-export const TWITTER_ACCOUNT = 'https://twitter.com/hisasshii'
+export const CREATOR_SITE = 'https://www.hisachii.com/'
 
 export const GTM_INFO = {
   development: {
