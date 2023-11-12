@@ -96,11 +96,6 @@ export const UserProvider = ({ children }: Props) => {
     }
   }, [user])
 
-  // useEffect(() => {
-  //   console.log('Google IDトークン:', token)
-  //   console.log('Googleユーザー2:', user)
-  // }, [token])
-
   return (
     <UserContext.Provider
       value={{

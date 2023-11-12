@@ -13,7 +13,7 @@ import { useLogContext } from '../../../../contexts/LogContext'
 import coundDown from '../../../../assets/sounds/countdown.mp3'
 
 export default function Timer() {
-  const { questList, setQuestList, selectedQuestId, isEdit } = useQuestContext()
+  const { questList, mutationQuestList, selectedQuestId, isEdit } = useQuestContext()
   const { status, setStatus, volume } = usePomodoroContext()
   const { createLog, doneLog } = useLogContext()
   const [countNum, setCountNum] = useState(3)
@@ -46,7 +46,7 @@ export default function Timer() {
       const updatedQuestList = structuredClone(questList)
       updatedQuestList[targetIndex].totalMinutes =
         updatedQuestList[targetIndex].totalMinutes + Math.round(POMODORO_TIME / 60)
-      setQuestList(updatedQuestList)
+      mutationQuestList(updatedQuestList)
       doneLog()
     } else {
       notifications.show({

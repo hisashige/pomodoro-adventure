@@ -15,19 +15,22 @@ interface Props {
 
 export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElement>) => {
   const { isRunning } = usePomodoroContext()
-  const { questList, setQuestList, isEdit, setIsEdit } = useQuestContext()
-  const [editQuestList, setEditQuestList] = useState(questList)
+  const { questList, initialQueryCompleted, mutationQuestList, mutationError, isEdit, setIsEdit } =
+    useQuestContext()
+  const [editQuestList, setEditQuestList] = useState([] as Quest[])
   const aliveEditQuestList = useMemo(
     () => editQuestList.filter((item) => !item.delete),
     [editQuestList]
   )
 
   useEffect(() => {
+    if (!initialQueryCompleted) return
+    setEditQuestList(questList)
     if (questList.length < 1) {
       setIsEdit(true)
       handleAddQuest()
     }
-  }, [])
+  }, [initialQueryCompleted])
 
   const handleNameChange = (questId: number, newName: string) => {
     const updatedQuestList = editQuestList.map((item) =>
@@ -59,7 +62,7 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
     setEditQuestList([...editQuestList, newQuest])
   }
 
-  const handleSaveAll = () => {
+  const handleSaveAll = async () => {
     const validateErrors = editQuestList.filter((item) => item.name === '' || item.name.length > 30)
     if (validateErrors.length > 0) {
       notifications.show({
@@ -79,15 +82,28 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
       })
       return
     }
-    setQuestList(editQuestList)
-    setIsEdit(false)
-    notifications.show({
-      title: <Text weight="bold">更新</Text>,
-      message: `クエストの設定を更新しました。`,
-      color: 'teal',
-      icon: <IconCheck size="1.2rem" />,
-    })
+    const success = await mutationQuestList(editQuestList.map(filterQuestKeys))
+    if (success) {
+      notifications.show({
+        title: <Text weight="bold">保存</Text>,
+        message: `クエストの設定を保存しました。`,
+        color: 'teal',
+        icon: <IconCheck size="1.2rem" />,
+      })
+      setIsEdit(false)
+    } else {
+      notifications.show({
+        title: <Text weight="bold">保存に失敗しました。</Text>,
+        message: `クエストの保存に失敗しました。`,
+        color: 'red',
+        icon: <IconX size="1.2rem" />,
+      })
+    }
   }
+
+  useEffect(() => {
+    if (mutationError) console.error('mutationError', mutationError)
+  }, [mutationError])
 
   const cancelEdit = () => {
     setEditQuestList(questList)
@@ -161,3 +177,12 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
     </div>
   )
 })
+
+const filterQuestKeys = (quest: Quest) => {
+  return {
+    id: quest.id,
+    name: quest.name,
+    totalMinutes: quest.totalMinutes,
+    delete: quest.delete,
+  }
+}
