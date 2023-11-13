@@ -3,6 +3,9 @@ import { useApolloClient } from '../hooks/useApolloClient'
 import { useQuery, useMutation, ApolloError } from '@apollo/client'
 import { GET_QUESTS } from '../gql/query'
 import { EDIT_QUESTS } from '../gql/mutation'
+import { notifications } from '@mantine/notifications'
+import { Text } from '@mantine/core'
+import { IconX } from '@tabler/icons-react'
 
 export interface Quest {
   id: number
@@ -32,7 +35,6 @@ const defaultQuestContext = {
   queryError: undefined,
   mutationLoading: false,
   mutationError: undefined,
-
   mutationQuestList: () => Promise.resolve(true),
   selectedQuestId: null,
   setSelectedQuestId: () => {},
@@ -66,6 +68,20 @@ export const QuestProvider = ({ children }: Props) => {
     }
   )
 
+  // Apollo Clientのエラーハンドリング
+  useEffect(() => {
+    if (mutationError) {
+      console.error('mutationError', mutationError)
+
+      notifications.show({
+        title: <Text weight="bold">保存に失敗しました。</Text>,
+        message: `クエストの保存に失敗しました。`,
+        color: 'red',
+        icon: <IconX size="1.2rem" />,
+      })
+    }
+  }, [mutationError])
+
   /* State */
   const [initialQueryCompleted, setInitialQueryCompleted] = useState(
     defaultQuestContext.initialQueryCompleted
@@ -80,7 +96,6 @@ export const QuestProvider = ({ children }: Props) => {
   /* Effect */
   useEffect(() => {
     if (queryData) {
-      console.log('queryData', queryData)
       setQuestList(queryData.quests)
       setInitialQueryCompleted(true)
     }
@@ -88,8 +103,9 @@ export const QuestProvider = ({ children }: Props) => {
 
   /* Function */
   const mutationQuestList = async (newQuestList: Quest[]) => {
+    const updateQuestData = newQuestList.map((quest) => filterQuestKeys(quest))
     try {
-      await editQuests({ variables: { bulkUpdateQuestData: { quests: newQuestList } } })
+      await editQuests({ variables: { bulkUpdateQuestData: { quests: updateQuestData } } })
       setQuestList(newQuestList)
       return true
     } catch (error) {
@@ -120,3 +136,12 @@ export const QuestProvider = ({ children }: Props) => {
 }
 
 export const useQuestContext = () => useContext(QuestContext)
+
+const filterQuestKeys = (quest: Quest) => {
+  return {
+    id: quest.id,
+    name: quest.name,
+    totalMinutes: quest.totalMinutes,
+    delete: quest.delete,
+  }
+}

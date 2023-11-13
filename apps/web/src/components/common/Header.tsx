@@ -10,7 +10,7 @@ import {
   Button,
   Tooltip,
 } from '@mantine/core'
-import { IconCheck, IconHelp } from '@tabler/icons-react'
+import { IconHelp } from '@tabler/icons-react'
 import useFlipPage from '../../hooks/useFlipPage'
 import { CREATOR_SITE } from '../../consts/common'
 import { useTour } from '@reactour/tour'
@@ -18,7 +18,6 @@ import { useOs } from '@mantine/hooks'
 import SignInWithGoogleButton from './SignInWithGoogleButton'
 import { IconLogout } from '@tabler/icons-react'
 import { useUserContext } from '../../contexts/UserContext'
-import { notifications } from '@mantine/notifications'
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -109,12 +108,7 @@ export default function HeaderMiddle() {
   const handleSignOut = () => {
     if (auth === null) return
     auth.signOut().then(() => {
-      notifications.show({
-        title: <Text weight="bold">サインアウトしました。</Text>,
-        message: `また一緒に冒険できることを楽しみにしています。`,
-        color: 'teal',
-        icon: <IconCheck size="1.2rem" />,
-      })
+      window.location.reload()
     })
   }
 

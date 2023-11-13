@@ -15,7 +15,7 @@ interface Props {
 
 export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElement>) => {
   const { isRunning } = usePomodoroContext()
-  const { questList, initialQueryCompleted, mutationQuestList, mutationError, isEdit, setIsEdit } =
+  const { questList, initialQueryCompleted, mutationQuestList, isEdit, setIsEdit } =
     useQuestContext()
   const [editQuestList, setEditQuestList] = useState([] as Quest[])
   const aliveEditQuestList = useMemo(
@@ -82,7 +82,7 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
       })
       return
     }
-    const success = await mutationQuestList(editQuestList.map(filterQuestKeys))
+    const success = await mutationQuestList(editQuestList)
     if (success) {
       notifications.show({
         title: <Text weight="bold">保存</Text>,
@@ -91,19 +91,8 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
         icon: <IconCheck size="1.2rem" />,
       })
       setIsEdit(false)
-    } else {
-      notifications.show({
-        title: <Text weight="bold">保存に失敗しました。</Text>,
-        message: `クエストの保存に失敗しました。`,
-        color: 'red',
-        icon: <IconX size="1.2rem" />,
-      })
     }
   }
-
-  useEffect(() => {
-    if (mutationError) console.error('mutationError', mutationError)
-  }, [mutationError])
 
   const cancelEdit = () => {
     setEditQuestList(questList)
@@ -177,12 +166,3 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
     </div>
   )
 })
-
-const filterQuestKeys = (quest: Quest) => {
-  return {
-    id: quest.id,
-    name: quest.name,
-    totalMinutes: quest.totalMinutes,
-    delete: quest.delete,
-  }
-}

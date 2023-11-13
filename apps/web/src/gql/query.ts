@@ -19,10 +19,11 @@ export const GET_LOGS = gql`
     logs {
       id
       uid
-      enemy
-      minutes
       questId
+      enemy
       done
+      startTime
+      minutes
       createdAt
       updatedAt
     }

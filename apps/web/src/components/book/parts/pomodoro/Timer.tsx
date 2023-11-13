@@ -77,7 +77,7 @@ export default function Timer() {
     }
   }, [seconds])
   // スタート処理
-  const startTimer = () => {
+  const startTimer = async () => {
     if (isEdit) {
       modals.open({
         title: 'クエストの編集中は開始できません。',
@@ -104,15 +104,16 @@ export default function Timer() {
       })
       return
     }
+    if (!(await createLog())) return
     startCount(TimerStatus.CountStart, start)
-    createLog()
   }
   // 再スタート処理
-  const restartTimer = () => {
+  const restartTimer = async () => {
     const restartExpiryTimestamp = new Date()
     restartExpiryTimestamp.setSeconds(restartExpiryTimestamp.getSeconds() + POMODORO_TIME + 3)
+
+    if (!(await createLog())) return
     startCount(TimerStatus.CountStart, () => restart(restartExpiryTimestamp))
-    createLog()
   }
   // カウント処理（スタート、フェードアウト時共通）
   const startCount = (status: TimerStatus, callback?: () => void) => {

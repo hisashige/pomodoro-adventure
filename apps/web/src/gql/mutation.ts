@@ -14,30 +14,32 @@ export const EDIT_QUESTS = gql`
   }
 `
 
-export const CREATE_LOGS = gql`
+export const CREATE_LOG = gql`
   mutation CreateLog($logData: LogInput!) {
     createLog(logData: $logData) {
       id
       uid
-      enemy
-      minutes
       questId
+      enemy
       done
+      startTime
+      minutes
       createdAt
       updatedAt
     }
   }
 `
 
-export const UPDATE_LOGS = gql`
+export const UPDATE_LOG = gql`
   mutation UpdateLog($logData: LogInput!) {
     updateLog(logData: $logData) {
       id
       uid
-      enemy
-      minutes
       questId
+      enemy
       done
+      startTime
+      minutes
       createdAt
       updatedAt
     }
