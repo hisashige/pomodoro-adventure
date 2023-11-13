@@ -8,6 +8,7 @@ import { notifications } from '@mantine/notifications'
 import { usePomodoroContext } from '../../../contexts/PomodoroContext'
 import Enemy from '../parts/questList/Enemy'
 import { createId } from '../../../libs/dataUtils'
+import { throttle } from '../../../libs/throttle'
 
 interface Props {
   number: number
@@ -62,7 +63,7 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
     setEditQuestList([...editQuestList, newQuest])
   }
 
-  const handleSaveAll = async () => {
+  const handleSaveAll = throttle(async () => {
     const validateErrors = editQuestList.filter((item) => item.name === '' || item.name.length > 30)
     if (validateErrors.length > 0) {
       notifications.show({
@@ -92,7 +93,7 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
       })
       setIsEdit(false)
     }
-  }
+  })
 
   const cancelEdit = () => {
     setEditQuestList(questList)

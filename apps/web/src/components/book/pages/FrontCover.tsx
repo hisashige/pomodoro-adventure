@@ -6,6 +6,7 @@ import SignInWithGoogleButton from '../../common/SignInWithGoogleButton'
 import { signInAnonymously } from 'firebase/auth'
 import { notifications } from '@mantine/notifications'
 import { IconCheck, IconX } from '@tabler/icons-react'
+import { throttle } from '../../../libs/throttle'
 
 type Props = {
   toNextPage: () => void
@@ -13,7 +14,11 @@ type Props = {
 export default React.forwardRef(({ toNextPage }: Props, ref: LegacyRef<HTMLDivElement>) => {
   const { user, auth, initialized } = useUserContext()
 
-  const handleSignInAnonymously = () => {
+  const handlePressToStart = throttle(() => {
+    toNextPage()
+  })
+
+  const handleSignInAnonymously = throttle(() => {
     if (auth === null) return
     signInAnonymously(auth)
       .then(() => {
@@ -32,7 +37,7 @@ export default React.forwardRef(({ toNextPage }: Props, ref: LegacyRef<HTMLDivEl
           icon: <IconX size="1.2rem" />,
         })
       })
-  }
+  }, 10000)
 
   return (
     <div ref={ref} className={'page page-cover page-cover-top'}>
@@ -43,7 +48,7 @@ export default React.forwardRef(({ toNextPage }: Props, ref: LegacyRef<HTMLDivEl
         {initialized ? (
           user ? (
             <Button
-              onClick={toNextPage}
+              onClick={handlePressToStart}
               radius="xl"
               size="lg"
               style={{ width: '200px' }}

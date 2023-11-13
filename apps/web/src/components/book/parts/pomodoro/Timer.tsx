@@ -11,6 +11,7 @@ import { TimerStatus, usePomodoroContext } from '../../../../contexts/PomodoroCo
 import { getHowl } from '../../../../libs/howler'
 import { useLogContext } from '../../../../contexts/LogContext'
 import coundDown from '../../../../assets/sounds/countdown.mp3'
+import { throttle } from '../../../../libs/throttle'
 
 export default function Timer() {
   const { questList, mutationQuestList, selectedQuestId, isEdit } = useQuestContext()
@@ -76,8 +77,26 @@ export default function Timer() {
       startCount(TimerStatus.FadeOut)
     }
   }, [seconds])
+  // カウント処理（スタート、フェードアウト時共通）
+  const startCount = (status: TimerStatus, callback?: () => void) => {
+    setStatus(status)
+    const countInterval = setInterval(() => {
+      setCountNum((prev) => prev - 1)
+    }, 1000)
+    setTimeout(() => {
+      if (callback) callback()
+      if (status === TimerStatus.CountStart) {
+        setStatus(TimerStatus.Playing)
+      }
+      clearInterval(countInterval)
+      setCountNum(3)
+    }, 3000)
+  }
+  /**********************
+   * タイマーボタンハンドリング
+   **********************/
   // スタート処理
-  const startTimer = async () => {
+  const handleStart = throttle(async () => {
     if (isEdit) {
       modals.open({
         title: 'クエストの編集中は開始できません。',
@@ -106,30 +125,25 @@ export default function Timer() {
     }
     if (!(await createLog())) return
     startCount(TimerStatus.CountStart, start)
-  }
+  })
+  // 一時停止処理
+  const handlePause = throttle(() => {
+    setStatus(TimerStatus.Paused)
+    pause()
+  })
   // 再スタート処理
-  const restartTimer = async () => {
+  const handleRestart = throttle(async () => {
     const restartExpiryTimestamp = new Date()
     restartExpiryTimestamp.setSeconds(restartExpiryTimestamp.getSeconds() + POMODORO_TIME + 3)
 
     if (!(await createLog())) return
     startCount(TimerStatus.CountStart, () => restart(restartExpiryTimestamp))
-  }
-  // カウント処理（スタート、フェードアウト時共通）
-  const startCount = (status: TimerStatus, callback?: () => void) => {
-    setStatus(status)
-    const countInterval = setInterval(() => {
-      setCountNum((prev) => prev - 1)
-    }, 1000)
-    setTimeout(() => {
-      if (callback) callback()
-      if (status === TimerStatus.CountStart) {
-        setStatus(TimerStatus.Playing)
-      }
-      clearInterval(countInterval)
-      setCountNum(3)
-    }, 3000)
-  }
+  })
+  // 再開処理
+  const handleResume = throttle(() => {
+    setStatus(TimerStatus.Playing)
+    resume()
+  })
 
   /**********************
    * 表示制御
@@ -140,10 +154,7 @@ export default function Timer() {
       case TimerStatus.Playing:
         buttonArea = (
           <Button
-            onClick={() => {
-              setStatus(TimerStatus.Paused)
-              pause()
-            }}
+            onClick={handlePause}
             variant="gradient"
             gradient={{ from: 'teal', to: 'lime', deg: 105 }}
           >
@@ -154,10 +165,7 @@ export default function Timer() {
       case TimerStatus.Paused:
         buttonArea = (
           <Button
-            onClick={() => {
-              setStatus(TimerStatus.Playing)
-              resume()
-            }}
+            onClick={handleResume}
             variant="gradient"
             gradient={{ from: 'indigo', to: 'cyan' }}
           >
@@ -168,7 +176,7 @@ export default function Timer() {
       case TimerStatus.Finished:
         buttonArea = (
           <Button
-            onClick={restartTimer}
+            onClick={handleRestart}
             variant="gradient"
             gradient={{ from: 'orange', to: 'red' }}
           >
@@ -187,7 +195,7 @@ export default function Timer() {
       default:
         buttonArea = (
           <Button
-            onClick={startTimer}
+            onClick={handleStart}
             variant="gradient"
             gradient={{ from: 'teal', to: 'blue', deg: 60 }}
           >
