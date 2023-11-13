@@ -14,6 +14,7 @@ import { createContext, useContext, ReactNode, useState, useEffect } from 'react
 type UserConxtex = {
   user: User | null
   token: string | null
+  refreshToken: () => Promise<string | null>
   auth: Auth | null
   provider: GoogleAuthProvider | null
   initialized: boolean
@@ -22,6 +23,7 @@ type UserConxtex = {
 const defaultUserContext: UserConxtex = {
   user: null,
   token: null,
+  refreshToken: () => Promise.resolve(null),
   auth: null,
   provider: null,
   initialized: false,
@@ -96,11 +98,25 @@ export const UserProvider = ({ children }: Props) => {
     }
   }, [user])
 
+  const refreshToken = async () => {
+    if (user) {
+      try {
+        const idToken = await user.getIdToken(true)
+        setToken(idToken)
+        return idToken
+      } catch (error) {
+        console.error('トークンの取得に失敗しました', error)
+      }
+    }
+    return null
+  }
+
   return (
     <UserContext.Provider
       value={{
         user,
         token,
+        refreshToken,
         auth,
         provider,
         initialized,
