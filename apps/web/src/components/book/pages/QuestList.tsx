@@ -8,6 +8,7 @@ import { notifications } from '@mantine/notifications'
 import { usePomodoroContext } from '../../../contexts/PomodoroContext'
 import Enemy from '../parts/questList/Enemy'
 import { createId } from '../../../libs/dataUtils'
+import { throttle } from '../../../libs/throttle'
 
 interface Props {
   number: number
@@ -15,19 +16,22 @@ interface Props {
 
 export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElement>) => {
   const { isRunning } = usePomodoroContext()
-  const { questList, setQuestList, isEdit, setIsEdit } = useQuestContext()
-  const [editQuestList, setEditQuestList] = useState(questList)
+  const { questList, initialQueryCompleted, mutationQuestList, isEdit, setIsEdit } =
+    useQuestContext()
+  const [editQuestList, setEditQuestList] = useState([] as Quest[])
   const aliveEditQuestList = useMemo(
     () => editQuestList.filter((item) => !item.delete),
     [editQuestList]
   )
 
   useEffect(() => {
+    if (!initialQueryCompleted) return
+    setEditQuestList(questList)
     if (questList.length < 1) {
       setIsEdit(true)
       handleAddQuest()
     }
-  }, [])
+  }, [initialQueryCompleted])
 
   const handleNameChange = (questId: number, newName: string) => {
     const updatedQuestList = editQuestList.map((item) =>
@@ -59,7 +63,7 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
     setEditQuestList([...editQuestList, newQuest])
   }
 
-  const handleSaveAll = () => {
+  const handleSaveAll = throttle(async () => {
     const validateErrors = editQuestList.filter((item) => item.name === '' || item.name.length > 30)
     if (validateErrors.length > 0) {
       notifications.show({
@@ -79,15 +83,17 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
       })
       return
     }
-    setQuestList(editQuestList)
-    setIsEdit(false)
-    notifications.show({
-      title: <Text weight="bold">更新</Text>,
-      message: `クエストの設定を更新しました。`,
-      color: 'teal',
-      icon: <IconCheck size="1.2rem" />,
-    })
-  }
+    const success = await mutationQuestList(editQuestList)
+    if (success) {
+      notifications.show({
+        title: <Text weight="bold">保存</Text>,
+        message: `クエストの設定を保存しました。`,
+        color: 'teal',
+        icon: <IconCheck size="1.2rem" />,
+      })
+      setIsEdit(false)
+    }
+  })
 
   const cancelEdit = () => {
     setEditQuestList(questList)
