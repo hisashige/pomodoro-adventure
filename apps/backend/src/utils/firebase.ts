@@ -5,7 +5,7 @@ export function getFirebaseApp() {
   return firebaseApp;
 }
 
-const serviceAccount = require("../../serviceAccountKey-dev.json");
+const serviceAccount = require("../../serviceAccountKey.json");
 
 export async function initFirebase() {
   if (!firebaseApp) {

@@ -4,6 +4,10 @@ import { GraphQLModule } from "@nestjs/graphql";
 import { DirectiveLocation, GraphQLDirective } from "graphql";
 import { QuestsModule } from "./quests/quests.module";
 import { LogsModule } from "./logs/logs.module";
+import { join } from "path";
+
+const isEmulated = process.env.FUNCTIONS_EMULATOR === "true";
+const isDevelopment = process.env.NODE_ENV === "development";
 
 @Module({
   imports: [
@@ -11,7 +15,14 @@ import { LogsModule } from "./logs/logs.module";
     LogsModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: "schema.gql",
+      autoSchemaFile:
+        !isEmulated && isDevelopment
+          ? join(process.cwd(), "src/schema.gql")
+          : undefined,
+      typePaths:
+        isEmulated || !isDevelopment
+          ? [join(process.cwd(), "src/schema.gql")]
+          : undefined,
       installSubscriptionHandlers: true,
       buildSchemaOptions: {
         directives: [

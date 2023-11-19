@@ -1,4 +1,5 @@
 {
+  "entryFile": "main.local",
   "compilerOptions": {
     "plugins": [
       {
