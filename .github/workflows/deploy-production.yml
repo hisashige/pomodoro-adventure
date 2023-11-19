@@ -26,10 +26,12 @@ jobs:
       - name: Deploy to Production
         env:
           SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           cd apps/backend
           echo "$SERVICE_ACCOUNT_KEY" > serviceAccountKey.json
           yarn build
-          export GOOGLE_APPLICATION_CREDENTIALS=serviceAccountKey.json
+          echo "$GOOGLE_APPLICATION_CREDENTIALS" > googleApplicationCredintials.json
+          export GOOGLE_APPLICATION_CREDENTIALS=googleApplicationCredintials.json
           firebase use pomodoro-adventure-prd
           firebase deploy --only functions
