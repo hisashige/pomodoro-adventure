@@ -23,11 +23,13 @@ jobs:
         run: yarn install
 
       - name: Deploy to Development
+        environment:
+          name: Development
         env:
           SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
         run: |
           echo "$SERVICE_ACCOUNT_KEY" > serviceAccountKey.json
           yarn build
           export GOOGLE_APPLICATION_CREDENTIALS=serviceAccountKey.json
-          firebase use pomodoro-adventure-dev --debug
-          firebase deploy --only functions --debug
+          firebase use pomodoro-adventure-dev
+          firebase deploy --only functions
