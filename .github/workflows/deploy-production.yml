@@ -23,6 +23,8 @@ jobs:
         run: yarn install
 
       - name: Deploy to Production
+        environment:
+          name: Production
         env:
           SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
         run: |
