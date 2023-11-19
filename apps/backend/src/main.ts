@@ -19,7 +19,19 @@ const createNestServer = async (expressInstance: express.Express) => {
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      const allowedOrigins = ["https://pomodoro-adventure.vercel.app"];
+      const pattern =
+        /^https:\/\/pomodoro-adventure-(.+)-hisashige\.vercel\.app$/;
+
+      if (!origin) {
+        callback(null, true);
+      } else if (allowedOrigins.includes(origin) || pattern.test(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
   });
 
   return app.init();

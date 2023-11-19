@@ -16,6 +16,9 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Install Firebase CLI
+        run: yarn global add firebase-tools
+
       - name: Install dependencies
         run: yarn install
 
