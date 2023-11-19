@@ -24,7 +24,6 @@ jobs:
 
       - name: Deploy to Production
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
         run: |
           echo "$SERVICE_ACCOUNT_KEY" > serviceAccountKey.json

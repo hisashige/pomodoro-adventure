@@ -29,5 +29,5 @@ jobs:
           echo "$SERVICE_ACCOUNT_KEY" > serviceAccountKey.json
           yarn build
           export GOOGLE_APPLICATION_CREDENTIALS=serviceAccountKey.json
-          firebase use pomodoro-adventure-dev
-          firebase deploy --only functions
+          firebase use pomodoro-adventure-dev --debug
+          firebase deploy --only functions --debug
