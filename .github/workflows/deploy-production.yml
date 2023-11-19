@@ -29,5 +29,5 @@ jobs:
         run: |
           echo "$SERVICE_ACCOUNT_KEY" > serviceAccountKey.json
           yarn build
-          firebase use pomodoro-adventure-prd
-          firebase deploy --only functions
+          firebase use pomodoro-adventure-prd --token "$FIREBASE_TOKEN"
+          firebase deploy --only functions --token "$FIREBASE_TOKEN"
