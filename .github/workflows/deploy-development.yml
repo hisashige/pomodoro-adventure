@@ -27,6 +27,7 @@ jobs:
         env:
           SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
         run: |
+          cd apps/backend
           echo "$SERVICE_ACCOUNT_KEY" > serviceAccountKey.json
           yarn build
           export GOOGLE_APPLICATION_CREDENTIALS=serviceAccountKey.json
