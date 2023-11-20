@@ -15,7 +15,7 @@ export const GET_QUESTS = gql`
 `
 
 export const GET_LOGS = gql`
-  query getLogs {
+  query GetLogs {
     logs {
       id
       uid
