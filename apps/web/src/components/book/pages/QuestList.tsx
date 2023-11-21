@@ -2,8 +2,16 @@ import React, { LegacyRef, useEffect, useMemo, useState } from 'react'
 import QuestItem from '../parts/questList/QuestItem'
 import { Quest, useQuestContext } from '../../../contexts/QuestContext'
 import Page from '../layouts/Page'
-import { ActionIcon, Button, Group, Text } from '@mantine/core'
-import { IconCheck, IconDeviceFloppy, IconEdit, IconPlus, IconX } from '@tabler/icons-react'
+import { ActionIcon, Button, Center, Group, Loader, Text } from '@mantine/core'
+import { Alert } from '@mantine/core'
+import {
+  IconCheck,
+  IconDeviceFloppy,
+  IconEdit,
+  IconPlus,
+  IconX,
+  IconInfoCircle,
+} from '@tabler/icons-react'
 import { notifications } from '@mantine/notifications'
 import { usePomodoroContext } from '../../../contexts/PomodoroContext'
 import Enemy from '../parts/questList/Enemy'
@@ -16,8 +24,16 @@ interface Props {
 
 export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElement>) => {
   const { isRunning } = usePomodoroContext()
-  const { questList, initialQueryCompleted, mutationQuestList, isEdit, setIsEdit } =
-    useQuestContext()
+  const {
+    questList,
+    initialQueryCompleted,
+    mutationQuestList,
+    queryLoading,
+    mutationLoading,
+    queryError,
+    isEdit,
+    setIsEdit,
+  } = useQuestContext()
   const [editQuestList, setEditQuestList] = useState([] as Quest[])
   const aliveEditQuestList = useMemo(
     () => editQuestList.filter((item) => !item.delete),
@@ -137,21 +153,43 @@ export default React.forwardRef(({ number }: Props, ref: LegacyRef<HTMLDivElemen
     <div className="page" ref={ref}>
       <Page number={number} header="Quest List">
         <div className="quest-area">
-          <ButtonArea />
-
-          {aliveEditQuestList.map((quest) => {
-            const storedQuest = questList.find((fixQuest) => fixQuest.id === quest.id)
-            return (
-              <QuestItem
-                key={quest.id}
-                storedQuest={storedQuest}
-                editQuest={quest}
-                onChangeName={handleNameChange}
-                onDelete={handleDelete}
-                isEdit={isEdit}
-              />
-            )
-          })}
+          {queryError ? (
+            <Alert
+              variant="light"
+              color="orange"
+              title="クエストの取得に失敗しました。"
+              icon={<IconInfoCircle />}
+            >
+              通信状態などを確認してください。
+              <br />
+              {queryError.message}
+            </Alert>
+          ) : (
+            <>
+              {queryLoading || mutationLoading ? (
+                <Center m={30}>
+                  <Loader size={50} />
+                </Center>
+              ) : (
+                <>
+                  <ButtonArea />
+                  {aliveEditQuestList.map((quest) => {
+                    const storedQuest = questList.find((fixQuest) => fixQuest.id === quest.id)
+                    return (
+                      <QuestItem
+                        key={quest.id}
+                        storedQuest={storedQuest}
+                        editQuest={quest}
+                        onChangeName={handleNameChange}
+                        onDelete={handleDelete}
+                        isEdit={isEdit}
+                      />
+                    )
+                  })}
+                </>
+              )}
+            </>
+          )}
 
           {isEdit && aliveEditQuestList.length < 5 && (
             <Group position="right" pr={30}>
