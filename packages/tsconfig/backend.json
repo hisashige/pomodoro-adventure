@@ -1,0 +1,16 @@
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "../../apps/backend/dist",
+    "baseUrl": "../../apps/backend",
+    "incremental": true,
+    "strictPropertyInitialization": false
+  },
+  "include": ["src/**/*"]
+}

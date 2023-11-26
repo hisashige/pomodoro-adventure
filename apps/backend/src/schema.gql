@@ -1,0 +1,65 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+directive @upper on FIELD_DEFINITION
+
+"""quset """
+type Quest {
+  id: Int!
+  uid: ID!
+  name: String!
+  totalMinutes: Float!
+  delete: Boolean!
+  createdAt: String!
+  updatedAt: String
+}
+
+"""log """
+type Log {
+  id: Int!
+  uid: ID!
+  questId: Int!
+  enemy: String!
+  minutes: Int!
+  done: Boolean!
+  startTime: String!
+  createdAt: String!
+  updatedAt: String
+}
+
+type Query {
+  quests: [Quest!]!
+  logs: [Log!]!
+}
+
+type Mutation {
+  editQuests(bulkUpdateQuestData: BulkUpdateQuestInput!): [Quest!]!
+  createLog(logData: LogInput!): Log!
+  updateLog(logData: LogInput!): Log!
+}
+
+input BulkUpdateQuestInput {
+  quests: [QuestInput!]!
+}
+
+input QuestInput {
+  id: Int!
+  name: String!
+  totalMinutes: Float!
+  delete: Boolean!
+}
+
+input LogInput {
+  id: Int!
+  questId: Int!
+  enemy: String!
+  minutes: Int!
+  done: Boolean!
+  startTime: String!
+}
+
+type Subscription {
+  questUpdated: [Quest!]!
+  logUpdated: [Log!]!
+}

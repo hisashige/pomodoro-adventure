@@ -1,0 +1,13 @@
+{
+  "entryFile": "main.local",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/graphql",
+        "options": {
+          "introspectComments": true
+        }
+      }
+    ]
+  }
+}

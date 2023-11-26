@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "source": "./",
+    "runtime": "nodejs18",
+    "codebase": "default",
+    "ignore": ["node_modules", ".turbo", "firebase-debug.log", "ui-debug.log"]
+  }
+}

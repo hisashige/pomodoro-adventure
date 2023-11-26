@@ -1,0 +1,37 @@
+name: Deploy to Firebase(Development)
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Development
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+
+      - name: Install Firebase CLI
+        run: yarn global add firebase-tools
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Deploy to Development
+        env:
+          SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          cd apps/backend
+          echo "$SERVICE_ACCOUNT_KEY" > serviceAccountKey.json
+          yarn build
+          echo "$GOOGLE_APPLICATION_CREDENTIALS" > googleApplicationCredintials.json
+          export GOOGLE_APPLICATION_CREDENTIALS=googleApplicationCredintials.json
+          firebase use pomodoro-adventure-dev
+          firebase deploy --only functions
