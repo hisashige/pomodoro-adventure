@@ -32,11 +32,16 @@ export function useApolloClient() {
   })
 
   const errorLink = onError(({ graphQLErrors, operation, forward }) => {
+    const context = operation.getContext()
+    const retryCount = context.retryCount || 0
+
     if (
       graphQLErrors &&
       graphQLErrors.some(
         (err) =>
-          err.extensions.code === 'UNAUTHENTICATED' || err.message.includes('auth/id-token-expired')
+          (err.extensions.code === 'UNAUTHENTICATED' ||
+            err.message.includes('auth/id-token-expired')) &&
+          retryCount < 3
       )
     ) {
       return new Observable((observer) => {
@@ -47,6 +52,7 @@ export function useApolloClient() {
                 ...headers,
                 Authorization: `Bearer ${newToken}`,
               },
+              retryCount: retryCount + 1,
             }))
             const subscriber = {
               next: observer.next.bind(observer),
