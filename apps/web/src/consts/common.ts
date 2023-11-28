@@ -1,4 +1,4 @@
-export const CREATOR_SITE = 'https://www.hisachii.com/'
+export const CREATOR_SITE = 'https://www.hisachii.com/articles/z_i7k76jm5j'
 
 export const GTM_INFO = {
   development: {

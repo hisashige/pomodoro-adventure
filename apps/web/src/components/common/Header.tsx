@@ -146,7 +146,7 @@ export default function HeaderMiddle() {
             </Tooltip>
           )}
 
-          <Tooltip label="制作者のサイト">
+          <Tooltip label="制作者の思い">
             <a href={CREATOR_SITE} target="_blank" rel="noopener noreferrer">
               <ActionIcon size="lg" color="dark">
                 <img
