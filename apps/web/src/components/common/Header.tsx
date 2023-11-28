@@ -67,9 +67,9 @@ export default function HeaderMiddle() {
   const os = useOs()
   const isSupportedOS = os === 'windows' || os === 'macos'
 
-  const { classes, cx } = useStyles()
+  const { classes } = useStyles()
 
-  const { page, totalPage, toPage, toNextPage, toPrevPage } = useFlipPage()
+  const { page, totalPage, toNextPage, toPrevPage } = useFlipPage()
 
   const pageButton = [
     {
