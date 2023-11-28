@@ -120,21 +120,12 @@ export default function HeaderMiddle() {
             {items}
           </Group>
         )}
-        <a
-          href=""
-          className={cx(classes.link)}
-          onClick={(event) => {
-            event.preventDefault()
-            toPage(0)
-          }}
-        >
-          <Group spacing={5}>
-            <Image maw={50} mx="auto" radius="md" src="images/logo.png" alt="ポモにゃん" />
-            <Text size="xl" weight={500}>
-              Pomodoro Adventure
-            </Text>
-          </Group>
-        </a>
+        <Group spacing={5}>
+          <Image maw={50} mx="auto" radius="md" src="images/logo.png" alt="ポモにゃん" />
+          <Text size="xl" weight={500}>
+            Pomodoro Adventure
+          </Text>
+        </Group>
         <Group spacing={0} className={classes.social} position="right" noWrap>
           {page === 1 && (
             <Tooltip label="ツアーを開始する">
